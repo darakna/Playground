@@ -65,36 +65,24 @@ char* increment(char word[9], int position)
 
 char* process_w(char* word2)
 {
-	std::cout << "Test3" << std::endl;
 	bool valid = false;
-	std::cout << "Test4: " << word2<<std::endl;
 	while (valid == false)
 	{
-		word2 = increment(word2, 7);
-		//std::cout << "Test5: " << word2<<std::endl;
+		*word2 = *increment(word2, 7);
 		if (straight_letters(word2) && (confusing_letters(word2)) && (pair_letters(word2)))
 			valid = true;
-		
 	}
-	
+
 	return word2;
 }
 
-
 int main()
 {
-	std::cout << "Test1" << std::endl;
 	char word2[9] = "hepxcrrq";
-	std::cout << "Test2" << std::endl;
-	
-
-
-	word2[9] = *process_w(word2);
+	*word2 = *process_w(word2);
+	std::cout << word2 << std::endl;
+	*word2 = *process_w(word2);
 	std::cout << word2 << std::endl;
 
-	word2[9] = *process_w(word2);
-	std::cout << word2 << std::endl;
-
-	
 }
 
