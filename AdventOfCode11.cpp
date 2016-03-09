@@ -1,5 +1,5 @@
 // AoC11.cpp : Defines the entry point for the console application.
-//
+// http://adventofcode.com/day/11
 
 #include "stdafx.h"
 #include<iostream>
