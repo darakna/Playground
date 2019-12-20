@@ -1,4 +1,4 @@
-__author__ = 'vpaun'
+__author__ = 'darakna'
 import os
 pid_name="calc.exe"
 tmp_location="D:\DllsList.txt"

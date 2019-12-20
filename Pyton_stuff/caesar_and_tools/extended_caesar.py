@@ -1,4 +1,4 @@
-__author__ = 'vpaun'
+__author__ = 'darakna'
 import sys
 # table of probabilities for each letter
 def letProb( c ):

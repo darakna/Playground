@@ -1,4 +1,4 @@
-__author__ = 'vpaun'
+__author__ = 'darakna'
 r_file=open("LICENSE.txt",'r')
 w_file=open("out.txt",'w')
 w_file2=open("out2.txt",'w')
