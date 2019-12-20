@@ -1,0 +1,15 @@
+0 xxxx -> N 0
+0 Nxxx -> W 1
+1 xxxS -> W 0
+1 Nxxx -> S 1
+1 xxxx -> S 1
+0 xxxS -> N 0
+1 NxWx -> S 1
+1 xxWx -> S 1
+0 xxWS -> N 0
+0 xxWX -> N 0
+1 xxWS -> E 2
+2 xxxS -> E 2
+2 xExS -> N 1
+1 xExx -> N 1
+1 NExx -> W 1

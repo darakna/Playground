@@ -1,0 +1,11 @@
+__author__ = 'darakna'
+filehandler = open("in.txt")
+filehandler_w=open("out.txt",'w')
+string_read=filehandler.read()
+#print(string_read)
+counter_a=string_read.count("a",0,len(string_read))
+counter_abc=string_read.count("abc",0,len(string_read))
+#print(counter_a,"\n",counter_abc)
+filehandler_w.write(str(counter_a))
+filehandler_w.write("\n")
+filehandler_w.write(str(counter_abc))
