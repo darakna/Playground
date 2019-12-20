@@ -1,4 +1,4 @@
-#test write to file
+#test write to file funct
 def print_to_file(*args):
     filehandler = open("Print_file.txt","a")
     for arg in args:
