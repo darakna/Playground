@@ -29,7 +29,7 @@ def verify_(nume):
     var=""
     for chars in var1:
         var=var+stripall(chars)
-    if "avcuf" in var:
+    if "injct" in var:
         print(var[
           var[:var.index(injected_dll_name)].rindex("\n")
           :
