@@ -1,52 +1,60 @@
-import string
-#import sys
-#sys.setrecursionlimit(1000000) # 10000 is an example, try with different values
 
-#filehandler = open('test_str.txt', 'r')
 filehandler = open('input_str.txt', 'r')
 text=filehandler.read()
-text = text.split("\n")
-#print(text)
+circuit_operations = text.split("\n")
 
-#for e in text:
-#    print (e, e.count(" "))
+all_operations = {}
 
-def isn(strg):
+def check_if_has_value(strg):
     try:
-        a = int(strg)
+        int(strg)
         return True
     except:
         return False
 
-def calc(text, value):
-    print ("Jump in for", value)
-    if isn(value) is True:
-            return int(value)
-    for e in text:
-        f = e.split(" ")
-        if e.endswith(" -> " + value):
 
-            if e.count(" ") == 2:
-                return calc(text,(f[0]))
-            elif "AND" in e:
-                return calc(text, f[0]) & calc(text, f[2])
-            elif "NOT" in e:
-                return 65536 + ~calc(text, f[1])
-            elif "OR" in e:
-                return calc(text, f[0]) | calc(text, f[2])
-            elif "LSHIFT" in e:
-                return calc(text, f[0]) << int(f[2])
-            elif "RSHIFT" in e:
-                return calc(text, f[0]) >> int(f[2])
-            else:
-                print("- = - = -")
-                return 0
-print(calc(text, "a"))
-#print(calc(text, "d"),": 72")
-#print(calc(text, "e"),": 507")
-#print(calc(text, "f"),": 492")
-#print(calc(text, "g"),": 114")
-#print(calc(text, "h"),": 65412")
-#print(calc(text, "i"),": 65079")
-#print(calc(text, "x"),": 123")
-#print(calc(text, "y"),": 456")
+for elem in circuit_operations:
+    current_elem = (elem.split(" -> "))
+    all_operations[current_elem[1]] = current_elem[0]
+is_done = 0
+while not is_done:
+    is_done = 1
+    if check_if_has_value(all_operations["a"]):
+        break
+
+    for elem in all_operations:
+        if not check_if_has_value(all_operations[elem]):
+            if all_operations[elem].count(" ") == 0:
+                if check_if_has_value(all_operations[all_operations[elem]]):
+                    print("%s = %s = %s" % (elem, all_operations[elem], all_operations[all_operations[elem]]))
+                    all_operations[elem] = all_operations[all_operations[elem]]
+            elif all_operations[elem].count(" ") == 1:
+                temp = all_operations[elem].split(" ")
+                temp_operation = temp[0]
+                temp_value = temp[1]
+                if check_if_has_value(all_operations[temp_value]):
+                    print("%s = %s = %s %s = %s" % (elem, all_operations[elem], temp_operation, all_operations[temp_value], int(all_operations[temp_value]) ^ 65535))
+                    all_operations[elem] = int(all_operations[temp_value]) ^ 65535
+            elif all_operations[elem].count(" ") == 2:
+                temp = all_operations[elem].split(" ")
+                temp_v0 = check_if_has_value(temp[0]) or check_if_has_value(all_operations[temp[0]])
+                temp_v2 = check_if_has_value(temp[2]) or check_if_has_value(all_operations[temp[2]])
+                if temp_v0 and temp_v2:
+                    value_v0 = int(temp[0]) if check_if_has_value(temp[0]) else int(all_operations[temp[0]])
+                    value_v2 = int(temp[2]) if check_if_has_value(temp[2]) else int(all_operations[temp[2]])
+                    if temp[1] == "LSHIFT":
+                        all_operations[elem] = value_v0 << value_v2
+                        print("%s = %s %s %s = %s" % (elem, temp[0], temp[1], temp[2], all_operations[elem]))
+                    elif temp[1] == "RSHIFT":
+                        all_operations[elem] = value_v0 >> value_v2
+                        print("%s = %s %s %s = %s" % (elem, temp[0], temp[1], temp[2], all_operations[elem]))
+                    elif temp[1] == "OR":
+                        all_operations[elem] = value_v0 | value_v2
+                        print("%s = %s %s %s = %s" % (elem, temp[0], temp[1], temp[2], all_operations[elem]))
+                    elif temp[1] == "AND":
+                        all_operations[elem] = value_v0 & value_v2
+                        print("%s = %s %s %s = %s" % (elem, temp[0], temp[1], temp[2], all_operations[elem]))
+                    else:
+                        print(temp[1])
+                        exit()
+            is_done = 0
