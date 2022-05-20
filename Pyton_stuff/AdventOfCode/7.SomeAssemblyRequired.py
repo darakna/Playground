@@ -1,5 +1,6 @@
 
-filehandler = open('input_str.txt', 'r')
+#filehandler = open('input_str.txt', 'r')
+filehandler = open('input_strp2.txt', 'r')
 text=filehandler.read()
 circuit_operations = text.split("\n")
 
