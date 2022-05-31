@@ -100,7 +100,9 @@ def watch_play(player):
 logfilename = "vlc_logfile.log"
 
 logtofile("Started VLC app")
-url = 'https://live.magicfm.ro:8443/magicfm.aacp'
+filehandler = open("url.ini", "r")
+url = filehandler.read()
+#url = 'https://live.magicfm.ro:8443/magicfm.aacp'
 
 player = init_player()
 
