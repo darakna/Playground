@@ -4,13 +4,28 @@
 cat << 'EOF' > /usr/local/bin/check_network_speed.sh
 #!/bin/bash
 
+# Check if debug mode is enabled
+if [[ "$1" == "debug" ]]; then
+    DEBUG=true
+fi
+
+# Function to reset the interface
+reset_interface() {
+    echo "Resetting interface..."
+    ifconfig enp0s31f6 down
+    ifconfig enp0s31f6 up
+}
+
 # Run ethtool command and check the output for "Speed: 1000Mb/s"
 if ethtool enp0s31f6 | grep -q "Speed: 1000Mb/s"; then
     echo "Speed is already set to 1000Mb/s"
 else
-    echo "Speed is not 1000Mb/s, resetting interface..."
-    ifconfig enp0s31f6 down
-    ifconfig enp0s31f6 up
+    echo "Speed is not 1000Mb/s"
+    if [[ "$DEBUG" != "true" ]]; then
+        reset_interface
+    else
+        echo "Debug mode enabled. Interface will not be reset."
+    fi
 fi
 EOF
 
@@ -29,10 +44,6 @@ ExecStart=/usr/local/bin/check_network_speed.sh
 
 [Install]
 WantedBy=multi-user.target
-
-[Timer]
-OnBootSec=1min
-OnUnitActiveSec=10min
 EOF
 
 # Reload systemd
