@@ -1,5 +1,12 @@
 #!/bin/bash
 
+# Stop and disable the timer
+systemctl stop check_network_speed.timer
+systemctl disable check_network_speed.timer
+
+# Remove the timer unit file
+rm /etc/systemd/system/check_network_speed.timer
+
 # Stop and disable the service
 systemctl stop check_network_speed.service
 systemctl disable check_network_speed.service
