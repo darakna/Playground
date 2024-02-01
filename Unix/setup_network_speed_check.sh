@@ -9,22 +9,27 @@ if [[ "$1" == "debug" ]]; then
     DEBUG=true
 fi
 
+# Function to echo with a timestamp
+echo_timestamp() {
+    echo "[$(date +'%Y-%m-%d %H:%M:%S')] $1"
+}
+
 # Function to reset the interface
 reset_interface() {
-    echo "Resetting interface..."
+    echo_timestamp "Resetting interface..."
     ifconfig enp0s31f6 down
     ifconfig enp0s31f6 up
 }
 
 # Run ethtool command and check the output for "Speed: 1000Mb/s"
 if ethtool enp0s31f6 | grep -q "Speed: 1000Mb/s"; then
-    echo "Speed is already set to 1000Mb/s"
+    echo_timestamp "Speed is already set to 1000Mb/s"
 else
-    echo "Speed is not 1000Mb/s"
+    echo_timestamp "Speed is not 1000Mb/s"
     if [[ "$DEBUG" != "true" ]]; then
         reset_interface
     else
-        echo "Debug mode enabled. Interface will not be reset."
+        echo_timestamp "Debug mode enabled. Interface will not be reset."
     fi
 fi
 EOF
