@@ -44,6 +44,11 @@ ExecStart=/usr/local/bin/check_network_speed.sh
 
 [Install]
 WantedBy=multi-user.target
+
+[Timer]
+OnBootSec=1min
+OnUnitActiveSec=10min
+Unit=check_network_speed.service
 EOF
 
 # Reload systemd
