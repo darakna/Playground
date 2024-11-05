@@ -1,0 +1,148 @@
+Operations:
+1. treesize
+cp hdd1/usr/bin/treesize /usr/bin/
+
+2. vpn
+
+3. transmission
+
+4. samba locations:
+a. Map NAS shares to /media/NAS-NSA-320/* using /etc/fstab entries to be mounted at boot time
+
+//10.2.2.110/Raid_diskWD/ /media/NAS-NSA-320/Raid_diskWD  cifs rw,vers=1.0,cache=strict,credentials=/root/.credfile,file_mode=0755,dir_mode=0755,soft,nounix,serverino,mapposix,rsize=61440,wsize=65536,echo_interval=60,actimeo=1
+//10.2.2.110/Seagate-Expansion-06361/ /media/NAS-NSA-320/Seagate-Expansion-06361  cifs rw,vers=1.0,cache=strict,credentials=/root/.credfile,file_mode=0755,dir_mode=0755,soft,nounix,serverino,mapposix,rsize=61440,wsize=65536,echo_interval=60,actimeo=1
+
+File: /root/.credfile
+username=<share user>
+password=<share password>
+domain=<share domain>
+
+b. Provide /opt/various_scripts/check_and_mount.sh in order to remount
+
+c. Add crontab -e entry
+* * * * * /opt/various_scripts/check_and_mount.sh
+
+
+5. plexmediaserver
+a. Download rpm package from https://www.plex.tv/media-server-downloads/
+b. Run yum install plexmediaserver-1.25.2.5319-c43dc0277.x86_64.rpm
+c. Run commands following sequence:
+https://www.howtoforge.com/tutorial/how-to-install-plex-media-server-on-centos-7/
+
+cd /etc/yum.repos.d/
+vim plex.repo
+
+# Plex.repo file will allow dynamic install/update of plexmediaserver.
+[PlexRepo]
+name=PlexRepo
+baseurl=https://downloads.plex.tv/repo/rpm/$basearch/
+enabled=1
+gpgkey=https://downloads.plex.tv/plex-keys/PlexSign.key
+gpgcheck=1
+
+sudo yum -y install plexmediaserver
+
+systemctl start plexmediaserver
+systemctl enable plexmediaserver
+systemctl status plexmediaserver
+
+sudo yum -y install firewalld
+systemctl start firewalld
+systemctl enable firewalld
+cd /etc/firewalld/services/
+vim plexmediaserver.xml
+
+<?xml version="1.0" encoding="utf-8"?>
+<service>
+  <short>plexmediaserver</short>
+  <description>Ports required by plexmediaserver.</description>
+  <port protocol="tcp" port="32400"></port>
+  <port protocol="udp" port="1900"></port>
+  <port protocol="tcp" port="3005"></port>
+  <port protocol="udp" port="5353"></port>
+  <port protocol="tcp" port="8324"></port>
+  <port protocol="udp" port="32410"></port>
+  <port protocol="udp" port="32412"></port>
+  <port protocol="udp" port="32413"></port>
+  <port protocol="udp" port="32414"></port>
+  <port protocol="tcp" port="32469"></port>
+</service>
+
+sudo firewall-cmd --add-service=plexmediaserver --permanent
+sudo firewall-cmd --reload
+
+firewall-cmd --list-all
+
+6. DNS
+add "ip   hostname" to /etc/hosts
+
+
+7. Samba
+
+ 1044  systemctl status smb.service
+ 1045  systemctl enable smb.service
+ 1046  systemctl start smb.service
+ 1047  systemctl status smb.service
+ 1048  cat /var/log/samba/log.smbd
+ 1049  cat /var/log/samba/log.samba-bgqd
+ 1050  firewall-cmd --permanent --zone=public --add-service=samba
+ 1051  firewall-cmd --zone=public --add-service=samba
+ groupadd sambashare
+ 1059  chgrp sambashare /media/small_storage/
+useradd -M -d /media/small_storage -s /usr/sbin/nologin -G sambashare sambauser
+usermod -d '' sambauser
+chown sambauser:sambashare /media/small_storage
+chmod 2770 /media/small_storage
+smbpasswd -a sambauser
+smbpasswd -e sambauser
+nano /etc/samba/smb.conf
+
+[small_storage]
+    path = /media/small_storage
+    browseable = no
+    read only = no
+    force create mode = 0660
+    force directory mode = 2770
+    valid users = sambauser 
+	
+	systemctl restart nmb.service
+	systemctl restart smb.service
+	
+	
+8. OpenVPN
+yum install tar wget
+ip a
+ip a show enp0s31f6
+10.2.2.145/24
+inet6 fe80::56b2:3ff:fe70:8d6c/64 scope link noprefixroute
+dig +short myip.opendns.com
+
+sudo dnf install epel-release
+sudo dnf install openvpn easy-rsa
+sudo nano /etc/openvpn/server/server.conf
+
+
+sudo firewall-cmd --zone=trusted --add-interface=tun0
+sudo firewall-cmd --permanent --zone=trusted --add-interface=tun0
+
+sudo firewall-cmd --permanent --add-service openvpn
+sudo firewall-cmd --permanent --zone=trusted --add-service openvpn
+
+sudo firewall-cmd --reload
+
+sudo firewall-cmd --list-services --zone=trusted
+
+sudo firewall-cmd --add-masquerade
+sudo firewall-cmd --add-masquerade --permanent
+
+
+sudo firewall-cmd --query-masquerade
+
+DEVICE=$(ip route | awk '/^default via/ {print $5}')
+sudo firewall-cmd --permanent --direct --passthrough ipv4 -t nat -A POSTROUTING -s 10.8.0.0/24 -o $DEVICE -j MASQUERADE
+
+sudo firewall-cmd --reload
+
+sudo systemctl -f enable openvpn-server@server.service
+
+sudo systemctl start openvpn-server@server.service
