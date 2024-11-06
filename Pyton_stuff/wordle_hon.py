@@ -1,17 +1,20 @@
 from nltk.corpus import words
 import sys
+import re
 
-word_lenght = 8
+word_length = 6
 
 def letters_in_word(letters, word):
     return any(c in word for c in letters)
 
-words_used = ["ABDUCTOR","SQUADRON","OXYPHYLE"]
+words_used = ["BARELY","CHINKS","GODFUL","CUBISM","EUROPA"]
 bigword = "".join(words_used)
-good_letters = "TOSNLE"
+good_letters = "AROU"
 
 # Define the pattern and its corresponding fixed letters
-pattern = 'S****TON'
+pattern = 'AURORA'
+regex_pattern = '^' + pattern.replace('*', '.') + '$'
+
 
 # Unique sorted letters in the words used
 all_letters = "".join(sorted(set(bigword)))
@@ -30,13 +33,13 @@ print("Good letters:", good_letters)
 print("Leftover letters:", leftover_letters)
 print("Alphabet:", alfabet)
 
-six_letter_words = [word.upper() for word in words.words() if len(word) == word_lenght]
+six_letter_words = [word.upper() for word in words.words() if len(word) == word_length]
 print("All six-letter words:", len(six_letter_words))
 
 filler_words = []
 for word in six_letter_words:
     # Ensure the word has word_lenght unique letters
-    if len(set(word)) < word_lenght:
+    if len(set(word)) < word_length:
         continue
     
     # Check if all letters are in leftover_letters and there are no duplicate letters
@@ -58,17 +61,17 @@ for word in six_letter_words:
         count_in_leftover = sum(1 for letter in unique_letters if letter in leftover_letters)
 
         # Place the word in the correct list based on the count of matching letters
-        if count_in_leftover >= word_lenght:
+        if count_in_leftover >= word_length:
             word_groups[0].append(word)
-        elif count_in_leftover == word_lenght-1:
+        elif count_in_leftover == word_length-1:
             word_groups[1].append(word)
-        elif count_in_leftover == word_lenght-2:
+        elif count_in_leftover == word_length-2:
             word_groups[2].append(word)
-        elif count_in_leftover == word_lenght-3:
+        elif count_in_leftover == word_length-3:
             word_groups[3].append(word)
-        elif count_in_leftover == word_lenght-4:
+        elif count_in_leftover == word_length-4:
             word_groups[4].append(word)
-        elif count_in_leftover == word_lenght-5:
+        elif count_in_leftover == word_length-5:
             word_groups[5].append(word)
 
 # Output each group
@@ -118,9 +121,9 @@ def matches_pattern2(word, pattern):
 # Filter X-letter words that contain all good letters and match the pattern
 words_matching_criteria2 = [
     word for word in six_letter_words
-    if word[3]=="A" and word[4]=="D" and word[5]=="R" 
+    if len(word) == word_length and re.match(regex_pattern, word)
 ]
 
 # Output the result
-print(word_lenght," letter words containing all good letters and matching the pattern:", words_matching_criteria2)
+print(word_length," letter words containing all good letters and matching the pattern:", words_matching_criteria2)
 
