@@ -53,26 +53,15 @@ print("All six-letter filler words:", len(filler_words))
 word_groups = [[] for _ in range(6)]
 
 for word in six_letter_words:
-    unique_letters = set(word)  # Get unique letters in the word
-
-    # Check if all letters in the word are unique
+    # Get unique letters in the word and check if all letters are unique
+    unique_letters = set(word)
     if len(unique_letters) == len(word):
         # Count how many letters from the word are in leftover_letters
         count_in_leftover = sum(1 for letter in unique_letters if letter in leftover_letters)
-
-        # Place the word in the correct list based on the count of matching letters
-        if count_in_leftover >= word_length:
-            word_groups[0].append(word)
-        elif count_in_leftover == word_length-1:
-            word_groups[1].append(word)
-        elif count_in_leftover == word_length-2:
-            word_groups[2].append(word)
-        elif count_in_leftover == word_length-3:
-            word_groups[3].append(word)
-        elif count_in_leftover == word_length-4:
-            word_groups[4].append(word)
-        elif count_in_leftover == word_length-5:
-            word_groups[5].append(word)
+        
+        # Place the word in the appropriate group based on the count
+        if 0 <= word_length - count_in_leftover <= word_length:
+            word_groups[word_length - count_in_leftover].append(word)
 
 # Output each group
 labels = ["6 or more letters in leftover", "5 letters in leftover", "4 letters in leftover", 
