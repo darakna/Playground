@@ -7,12 +7,12 @@ word_length = 8
 def letters_in_word(letters, word):
     return any(c in word for c in letters)
 
-words_used = ["BLIGHTED","UROMANCY","PORKFISH"]
+words_used = ["ABDUCTOR","KELPFISH","VEXINGLY"]
 bigword = "".join(words_used)
-good_letters = "ITERAC"
+good_letters = "ATOEPHNG"
 
 # Define the pattern and its corresponding fixed letters
-pattern = 'PR***IC*'
+pattern = '*****G**'
 regex_pattern = '^' + pattern.replace('*', '.') + '$'
 
 
@@ -95,7 +95,7 @@ words_matching_criteria = [
 ]
 
 # Output the result
-print("{} letter words containing all good letters and matching the pattern:".format(word_length), words_matching_criteria)
+print("{} letter words containing all good letters and matching the pattern:".format(word_length), words_matching_criteria[:5])
 
 
 # Convert good_letters to a set for efficient lookup
@@ -116,5 +116,5 @@ words_matching_criteria2 = [
 ]
 
 # Output the result
-print(word_length,"letter words containing all good letters and matching the pattern:", words_matching_criteria2)
+print(word_length,"letter words containing all good letters and matching the pattern:", words_matching_criteria2[:5])
 
