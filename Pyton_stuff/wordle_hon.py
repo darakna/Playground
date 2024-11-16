@@ -2,17 +2,17 @@ from nltk.corpus import words
 import sys
 import re
 
-word_length = 6
+word_length = 8
 
 def letters_in_word(letters, word):
     return any(c in word for c in letters)
 
-words_used = ["BARELY","CHINKS","GODFUL","CUBISM","EUROPA"]
+words_used = ["BLIGHTED","UROMANCY","PORKFISH"]
 bigword = "".join(words_used)
-good_letters = "AROU"
+good_letters = "ITERAC"
 
 # Define the pattern and its corresponding fixed letters
-pattern = 'AURORA'
+pattern = 'PR***IC*'
 regex_pattern = '^' + pattern.replace('*', '.') + '$'
 
 
@@ -34,7 +34,7 @@ print("Leftover letters:", leftover_letters)
 print("Alphabet:", alfabet)
 
 six_letter_words = [word.upper() for word in words.words() if len(word) == word_length]
-print("All six-letter words:", len(six_letter_words))
+print("All {} letter words:".format(word_length), len(six_letter_words))
 
 filler_words = []
 for word in six_letter_words:
@@ -45,12 +45,12 @@ for word in six_letter_words:
     # Check if all letters are in leftover_letters and there are no duplicate letters
     if all(letter in leftover_letters for letter in word) and all(word.count(letter) == 1 for letter in word):
         filler_words.append(word)
-print("All six-letter filler words:", len(filler_words))
+print("All {} letter filler words:".format(word_length), len(filler_words))
 # Lists for each category of words with at least 6, 5, 4... unique letters
 # Assuming filler_words is defined and leftover_letters is available
 
 # Create lists to hold words based on the count of letters in leftover_letters
-word_groups = [[] for _ in range(6)]
+word_groups = [[] for _ in range(word_length + 1)]
 
 for word in six_letter_words:
     # Get unique letters in the word and check if all letters are unique
@@ -67,10 +67,12 @@ for word in six_letter_words:
 labels = ["6 or more letters in leftover", "5 letters in leftover", "4 letters in leftover", 
           "3 letters in leftover", "2 letters in leftover", "1 letter in leftover"]
 
-for label, words_var in zip(labels, word_groups):
+#for label, words_var in zip(labels, word_groups):
     #pass
-    print(f"{label}: {words_var}")
-    
+#    print(f"{label}: {words_var}")
+
+for index_number in range(word_length):
+    print(word_length - index_number, "letters in leftover", word_groups[index_number][:5], "of {} words".format(len(word_groups[index_number])))    
 
 print("Filler words:", len(filler_words))
 print("All words:", len(words.words()))
@@ -93,7 +95,7 @@ words_matching_criteria = [
 ]
 
 # Output the result
-print("Six-letter words containing all good letters and matching the pattern:", words_matching_criteria)
+print("{} letter words containing all good letters and matching the pattern:".format(word_length), words_matching_criteria)
 
 
 # Convert good_letters to a set for efficient lookup
@@ -114,5 +116,5 @@ words_matching_criteria2 = [
 ]
 
 # Output the result
-print(word_length," letter words containing all good letters and matching the pattern:", words_matching_criteria2)
+print(word_length,"letter words containing all good letters and matching the pattern:", words_matching_criteria2)
 
