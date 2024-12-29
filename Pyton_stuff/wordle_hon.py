@@ -7,12 +7,12 @@ word_length = 8
 def letters_in_word(letters, word):
     return any(c in word for c in letters)
 
-words_used = ["ABDUCTOR","KELPFISH","VEXINGLY"]
+words_used = ["ABDUCTOR","KELPFISH","MOVINGLY","BLOWZING","MISTAKEN","DISTANCE","INSTANCE"]
 bigword = "".join(words_used)
-good_letters = "ATOEPHNG"
+good_letters = "ATEIN"
 
 # Define the pattern and its corresponding fixed letters
-pattern = '*****G**'
+pattern = 'IN*T***E'
 regex_pattern = '^' + pattern.replace('*', '.') + '$'
 
 
@@ -97,6 +97,16 @@ words_matching_criteria = [
 # Output the result
 print("{} letter words containing all good letters and matching the pattern:".format(word_length), words_matching_criteria[:5])
 
+good_words = []
+for word in words_matching_criteria:
+    bad_letters = ""
+    for used_word in words_used:
+        if used_word[0]!=pattern[0]:
+            bad_letters += used_word[0]
+    if word[0] not in bad_letters:
+        good_words.append(word)
+print("{} letter words containing only good letters and matching the pattern:".format(word_length), good_words)
+
 
 # Convert good_letters to a set for efficient lookup
 good_letters_set = set(all_letters)
@@ -116,5 +126,9 @@ words_matching_criteria2 = [
 ]
 
 # Output the result
-print(word_length,"letter words containing all good letters and matching the pattern:", words_matching_criteria2[:5])
+print(word_length,"letter words containing all good letters and words matching criteria2:", words_matching_criteria2[:5])
 
+for word in six_letter_words:
+    if word.endswith("OR") and not any (letter in word for letter in all_bad_letters):
+        #print(word)
+        pass
