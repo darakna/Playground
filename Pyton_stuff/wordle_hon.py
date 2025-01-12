@@ -7,12 +7,58 @@ word_length = 8
 def letters_in_word(letters, word):
     return any(c in word for c in letters)
 
-words_used = ["ABDUCTOR","KELPFISH","MOVINGLY","BLOWZING","MISTAKEN","DISTANCE","INSTANCE"]
+words_used = ["BACULOID","FRAGMENT"]
 bigword = "".join(words_used)
-good_letters = "ATEIN"
+good_letters = "BLOIMT"
 
 # Define the pattern and its corresponding fixed letters
-pattern = 'IN*T***E'
+pattern = '****L***'
+
+def dark_pattern_generation():
+    dark_pattern = ["","","","","","","","",""]
+    for word in words_used:
+        for index_letter in range(len(word)):
+            if word[index_letter] not in good_letters and word[index_letter]!= pattern[index_letter]:
+                if word[index_letter] not in dark_pattern[index_letter]:
+                    dark_pattern[index_letter]+=word[index_letter]
+
+    for elem in dark_pattern:
+        print(elem)
+
+
+def generate_strings(input_list):
+    if not input_list:
+        return []
+    
+    first, *rest = input_list
+    if not rest:
+        return [first]
+    
+    rest_combinations = generate_strings(rest)
+    result = []
+    
+    for combination in rest_combinations:
+        result.append(first + combination)
+        result.append(combination + first)
+    
+    return result
+
+def white_pattern_generation():
+    white_pattern = ["","","","","","","","",""]
+    for letter_index in range(word_length):
+        if pattern[letter_index]!="*":
+            white_pattern[letter_index]=pattern[letter_index]
+            continue
+        for letter in good_letters:
+            if letter!=pattern[letter_index]:
+                white_pattern[letter_index]+=letter
+    for elem in white_pattern:
+        print(elem)
+    #print(generate_strings(white_pattern))
+    
+
+white_pattern_generation()
+
 regex_pattern = '^' + pattern.replace('*', '.') + '$'
 
 
@@ -63,13 +109,6 @@ for word in six_letter_words:
         if 0 <= word_length - count_in_leftover <= word_length:
             word_groups[word_length - count_in_leftover].append(word)
 
-# Output each group
-labels = ["6 or more letters in leftover", "5 letters in leftover", "4 letters in leftover", 
-          "3 letters in leftover", "2 letters in leftover", "1 letter in leftover"]
-
-#for label, words_var in zip(labels, word_groups):
-    #pass
-#    print(f"{label}: {words_var}")
 
 for index_number in range(word_length):
     print(word_length - index_number, "letters in leftover", word_groups[index_number][:5], "of {} words".format(len(word_groups[index_number])))    
@@ -105,7 +144,7 @@ for word in words_matching_criteria:
             bad_letters += used_word[0]
     if word[0] not in bad_letters:
         good_words.append(word)
-print("{} letter words containing only good letters and matching the pattern:".format(word_length), good_words)
+print("{} letter words containing only good letters and matching the pattern:".format(word_length), good_words[:50])
 
 
 # Convert good_letters to a set for efficient lookup
