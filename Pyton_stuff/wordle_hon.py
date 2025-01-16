@@ -2,27 +2,37 @@ from nltk.corpus import words
 import sys
 import re
 
-word_length = 8
+word_length = 10
 
 def letters_in_word(letters, word):
     return any(c in word for c in letters)
 
-words_used = ["BACULOID","FRAGMENT"]
+words_used = ["ABSOLUTIVE","DEMOGRAPHY","SPHYGMODIC","SABADININE","SUBLIMATED","STREETWISE","STALAGMITE"]
 bigword = "".join(words_used)
-good_letters = "BLOIMT"
+good_letters = "ABSTIERC"
 
 # Define the pattern and its corresponding fixed letters
-pattern = '****L***'
+pattern = 'STA****I*E'
+#pattern = 'STARSCRIBE'
 
-def dark_pattern_generation():
-    dark_pattern = ["","","","","","","","",""]
-    for word in words_used:
-        for index_letter in range(len(word)):
-            if word[index_letter] not in good_letters and word[index_letter]!= pattern[index_letter]:
-                if word[index_letter] not in dark_pattern[index_letter]:
-                    dark_pattern[index_letter]+=word[index_letter]
-
-    for elem in dark_pattern:
+def gray_pattern_generation(leftover_letters):
+    gray_pattern = ["","","","","","","","","",""]
+    for index in range(word_length):
+        if pattern[index]!="*":
+            gray_pattern[index]+=pattern[index]
+        else:
+            gray_letters = ""
+            letters_at_index = ""
+            for word in words_used:
+                if word[index] not in letters_at_index:
+                    letters_at_index+=word[index]
+            for letter in good_letters+leftover_letters:
+                if letter in letters_at_index:
+                    pass
+                elif letter not in gray_letters:
+                    gray_letters+=letter
+            gray_pattern[index]=gray_letters
+    for elem in gray_pattern:
         print(elem)
 
 
@@ -43,21 +53,6 @@ def generate_strings(input_list):
     
     return result
 
-def white_pattern_generation():
-    white_pattern = ["","","","","","","","",""]
-    for letter_index in range(word_length):
-        if pattern[letter_index]!="*":
-            white_pattern[letter_index]=pattern[letter_index]
-            continue
-        for letter in good_letters:
-            if letter!=pattern[letter_index]:
-                white_pattern[letter_index]+=letter
-    for elem in white_pattern:
-        print(elem)
-    #print(generate_strings(white_pattern))
-    
-
-white_pattern_generation()
 
 regex_pattern = '^' + pattern.replace('*', '.') + '$'
 
@@ -81,6 +76,8 @@ print("Alphabet:", alfabet)
 
 six_letter_words = [word.upper() for word in words.words() if len(word) == word_length]
 print("All {} letter words:".format(word_length), len(six_letter_words))
+
+gray_pattern_generation(leftover_letters)
 
 filler_words = []
 for word in six_letter_words:
