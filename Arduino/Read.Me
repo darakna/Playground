@@ -1,0 +1,117 @@
+# Arduino Remote + Car – Pin Assignment & Instructions
+
+---
+
+## 1️⃣ Remote (Master) – Arduino Nano / Uno
+
+**Purpose:** Reads 4 controls (potentiometers/joysticks), encodes, sends via NRF24L01, shows feedback LED.
+
+| Function                         | Pin                | Notes                                      |
+| -------------------------------- | ------------------ | ------------------------------------------ |
+| Control 1 (Wheel 1 forward/back) | A0                 | Analog input, maps 0–255 with deadzone     |
+| Control 2 (Wheel 2 forward/back) | A1                 | Analog input, maps 0–255 with deadzone     |
+| Control 3 (Reserved)             | A2                 | Optional, not used                         |
+| Control 4 (Reserved)             | A3                 | Optional, not used                         |
+| NRF24 CE                         | 9                  | SPI control pin                            |
+| NRF24 CSN                        | 10                 | SPI control pin                            |
+| NRF24 SCK                        | 13                 | SPI clock (hardware)                       |
+| NRF24 MOSI                       | 11                 | SPI MOSI (hardware)                        |
+| NRF24 MISO                       | 12                 | SPI MISO (hardware)                        |
+| Feedback LED                     | 2 (or LED_BUILTIN) | Blinks on data ACK, errors (antenna/input) |
+| DC-DC Mini MP1584EN VIN          | Battery positive   | 7–24V input from battery                   |
+| DC-DC Mini MP1584EN VOUT         | NRF24L01 VCC       | Stable 3.3V for antenna                    |
+| DC-DC Mini MP1584EN GND          | Battery negative   | Common ground with Arduino & NRF24         |
+
+**Notes:**
+
+* NRF24L01 must be powered from DC-DC 3.3V output, not Arduino 3.3V.
+* Keep wires short for reliable RF.
+* Feedback LED: short blink = packet received; long blink = no input/antenna.
+
+---
+
+## 2️⃣ Car (Slave) – Arduino Nano / Uno
+
+**Purpose:** Receives data via NRF24L01, drives two BTS7960 motor modules, shows feedback LED.
+
+| Function                 | Pin              | Notes                                       |
+| ------------------------ | ---------------- | ------------------------------------------- |
+| **Motor 1 (Wheel 1)**    |                  |                                             |
+| R_EN1                    | 3                | Enable high side (set HIGH)                 |
+| L_EN1                    | 4                | Enable low side (set HIGH)                  |
+| RPWM1                    | 5                | PWM for forward                             |
+| LPWM1                    | 6                | PWM for reverse                             |
+| **Motor 2 (Wheel 2)**    |                  |                                             |
+| R_EN2                    | 7                | Enable high side (set HIGH)                 |
+| L_EN2                    | 8                | Enable low side (set HIGH)                  |
+| RPWM2                    | A0               | PWM for forward                             |
+| LPWM2                    | A1               | PWM for reverse                             |
+| NRF24 CE                 | 9                | SPI control pin                             |
+| NRF24 CSN                | 10               | SPI control pin                             |
+| NRF24 SCK                | 13               | SPI clock (hardware)                        |
+| NRF24 MOSI               | 11               | SPI MOSI (hardware)                         |
+| NRF24 MISO               | 12               | SPI MISO (hardware)                         |
+| Feedback LED             | LED_BUILTIN      | Blinks on packet received, errors (antenna) |
+| DC-DC Mini MP1584EN VIN  | Battery positive | 7–24V input from battery                    |
+| DC-DC Mini MP1584EN VOUT | NRF24L01 VCC     | Stable 3.3V for antenna                     |
+| DC-DC Mini MP1584EN GND  | Battery negative | Common ground with Arduino & NRF24          |
+
+**Notes:**
+
+* BTS7960 modules: RPWM/LPWM control speed & direction, R_EN/L_EN must be HIGH.
+* NRF24 antenna must be powered via DC-DC 3.3V.
+* PWM pins A0/A1 used for Motor 2 to avoid conflict with hardware SPI pins.
+
+---
+
+## 3️⃣ Wiring Recommendations
+
+1. **Power:**
+
+   * Remote Arduino: 5V or USB powered, NRF24 powered via DC-DC Mini MP1584EN 3.3V.
+   * Car Arduino: Motors require separate 12V–24V supply, Arduino powered via 5V regulated, NRF24 powered via DC-DC Mini MP1584EN 3.3V.
+   * Connect all grounds together (battery negative, Arduino GND, BTS7960 GND, NRF24 GND).
+
+2. **Motors:**
+
+   * Each BTS7960 module controls one wheel.
+   * RPWM = forward PWM, LPWM = reverse PWM.
+   * R_EN / L_EN = HIGH.
+
+3. **NRF24L01 Connections:**
+
+   * CE → Arduino digital pin (see table)
+   * CSN → Arduino digital pin (see table)
+   * MOSI → 11
+   * MISO → 12
+   * SCK → 13
+   * VCC → DC-DC 3.3V output
+   * GND → common ground
+
+4. **LED Feedback:**
+
+   * Optional external LED on chosen digital pin.
+   * Blinking patterns:
+
+     * **Remote:**
+
+       * Short blink = packet received by car
+       * 100/50 ms blink = no antenna
+       * 300/100 ms blink = no input
+     * **Car:**
+
+       * Long blink = packet received
+       * 100/50 ms blink = no antenna
+
+---
+
+## 4️⃣ Summary of Control Logic
+
+| Device | Data              | PWM Range             | Deadzone      | LED Feedback                        |
+| ------ | ----------------- | --------------------- | ------------- | ----------------------------------- |
+| Remote | 4 variables 0–255 | N/A                   | ±5 around 127 | Short/long blinks, error indication |
+| Car    | motor1 & motor2   | 0–255 forward/reverse | ±5 around 127 | LED blinks packet received, errors  |
+
+---
+
+**End of Instructions**
